@@ -186,10 +186,11 @@
             <div class="media-body w-50">
               <div class="row">
                 <div class="col-md-12 col-lg-2">
-                  <span class="badge badge-pill badge-warning" style="display: none">未回复</span>
-                  <span class="badge badge-pill badge-info" style="display: none">已回复</span>
-                  <span class="badge badge-pill badge-success">已解决</span>
+                  <span class="badge badge-pill badge-warning" style="display: none" v-show="question.status==0">未回复</span>
+                  <span class="badge badge-pill badge-info" style="display: none" v-show="question.status==1">已回复</span>
+                  <span class="badge badge-pill badge-success" v-show="question.status==2">已解决</span>
                 </div>
+
                 <div class="col-md-12 col-lg-10">
                   <h5 class="mt-0 mb-1 text-truncate">
                     <!--标题v-->
@@ -227,16 +228,19 @@
 
             </div>
             <!-- / class="media-body"-->
-            <img src="img/tags/example0.jpg"  class="ml-3 border img-fluid rounded" alt="" width="208" height="116">
+            <img src="img/tags/example0.jpg"
+                 class="ml-3 border img-fluid rounded" alt=""
+                 width="208" height="116" v-bind:src="question.tagImage">
           </div>
 
           <div class="row mt-2">
             <div class="col-6 offset-3">
               <nav aria-label="Page navigation example">
                 <div class="pagination">
-                  <a class="page-item page-link" href="#" >上一页</a>
-                  <a class="page-item page-link " href="#" >1</a>
-                  <a class="page-item page-link" href="#" >下一页</a>
+                  <a class="page-item page-link" href="#" v-on:click.prevent="loadQuestions(pageinfo.prePage)">上一页</a><!--//阻止原有跳转效果 #失效-->
+                  <a class="page-item page-link " href="#" v-for="n in pageinfo.navigatepageNums"
+                  v-on:click.prevent="loadQuestions(n)" v-bind:class="{'bg-secondary text-light':n==pageinfo.pageNum}"><span v-text="n">1</span></a>
+                  <a class="page-item page-link" href="#" v-on:click.prevent="loadQuestions(pageinfo.nextPage)">下一页</a>
                 </div>
               </nav>
             </div>
@@ -249,31 +253,11 @@
     </div>
     <div class="col-md-12 col-lg-4 pb-2">
       <!--个人信息-->
-      <div class="container-fluid font-weight-light">
-        <div class="card">
-          <h5 class="card-header">陈某</h5>
-          <div class="card-body">
-            <div class="list-inline mb-1 ">
-                <a class="list-inline-item mx-3 my-1 text-center">
-                  <div><strong>10</strong></div>
-                  <div>回答</div>
-                </a>
-                <a class="list-inline-item mx-3 my-1 text-center" href="personal/myQuestion.html">
-                  <div><strong>10</strong></div>
-                  <div>提问</div>
-                </a>
-                <a class="list-inline-item mx-3 my-1 text-center" href="personal/collect.html">
-                  <div><strong>10</strong></div>
-                  <div>收藏</div>
-                </a>
-                <a class="list-inline-item mx-3 my-1 text-center" href="personal/task.html">
-                  <div><strong>10</strong></div>
-                  <div>任务</div>
-                </a>
-            </div>
-          </div>
-        </div>
-      </div>
+
+
+      <userapp id="userApp" :user="user"> </userapp>
+
+
       <!--热点数据-->
       <div class="container-fluid bg-light mt-5">
         <h4 class="m-2 p-2 font-weight-light"><i class="fa fa-list" aria-hidden="true"></i> 热点问题</h4>
@@ -471,6 +455,7 @@
 <script src="js/utils.js"></script>
 <script src="js/tags_nav.js"></script>
 <script src="js/index.js"></script>
-
+<script src="js/user_info_temp.js"></script>
+<script src="js/user_info.js"></script>
 </body>
 </html>

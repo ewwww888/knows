@@ -8,14 +8,15 @@ let questionsApp = new Vue({
         pageinfo: {},
     },
     methods: {
-        loadQuestions: function () {
-            let index = location.href.lastIndexOf("#");
+        loadQuestions: function (pageNum) {
+            /*let index = location.href.lastIndexOf("#");
             let pageNum = 1;
             if (index != -1) {
                 pageNum = location.href.substring(index + 1);
-            }
+            }*/
             console.log(pageNum)
-            if (!pageNum) {
+            console.log(pageNum)
+            if (!pageNum) {  //不存在
                 pageNum = 1;
             }
             axios({
@@ -28,12 +29,12 @@ let questionsApp = new Vue({
                 console.log("成功加载数据");
                 console.log(r);
                 if (r.status == OK) {
-                    questionsApp.questions = r.data;
-                    //questionsApp.pageinfo = r.data;
+                    questionsApp.questions = r.data.list;
+                    questionsApp.pageinfo = r.data;
                     //为question对象添加持续时间属性
                     questionsApp.updateDuration();
                     questionsApp.updateTagImage();
-                    window.onhashchange = questionsApp.loadQuestions;
+                                                                       // window.onhashchange = questionsApp.loadQuestions;
                 }
             })
         },
@@ -42,6 +43,7 @@ let questionsApp = new Vue({
             let questions = this.questions;
             for (let i = 0; i < questions.length; i++) {
                 let tags = questions[i].tags;
+                //判断tags存在
                 if (tags) {
                     let tagImage = '/img/tags/' + tags[0].id + '.jpg';
                     console.log(tagImage);
@@ -65,9 +67,12 @@ let questionsApp = new Vue({
                 } else if (duration < 1000 * 60 * 60 * 24) {
                     questions[i].duration =
                         (duration / 1000 / 60 / 60).toFixed(0) + "小时以前";
-                } else {
+                } else if (duration < 1000 * 60 * 60 * 24*30){
                     questions[i].duration =
                         (duration / 1000 / 60 / 60 / 24).toFixed(0) + "天以前";
+                }else {
+                    questions[i].duration =
+                        (duration / 1000 / 60 / 60 / 24/30).toFixed(0) + "个月以前";
                 }
             }
         }

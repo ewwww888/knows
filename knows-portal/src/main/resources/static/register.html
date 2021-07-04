@@ -28,7 +28,7 @@
 
         <p class="text-center"><b>注册新用户</b></p>
 
-        <div id="error" class="alert alert-danger " style="display: none" v-bind:class="{'d-block':hasError}">
+        <div id="error" class="alert alert-danger d-b" style="display: none" v-bind:class="{'d-block':hasError}">
           <i class="fa fa-exclamation-triangle"></i> <span v-text="message"> 邀请码错误！</span>
         </div>
 
@@ -50,7 +50,6 @@
           </div>
           <div class="form-group has-icon">
             <input type="tel" name="phone" class="form-control" placeholder="请输入手机号"
-
               v-model="phone">
             <span class=" fa fa-phone form-control-icon"></span>
           </div>

@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="../bower_components/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css">
   <link rel="stylesheet" href="../bower_components/vue-select/dist/vue-select.css">
 
+
   <script src="../bower_components/jquery/dist/jquery.min.js"></script>
   <script src="../bower_components/popper.js/dist/umd/popper.min.js"></script>
   <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -24,7 +25,7 @@
   <script src="../bower_components/select2/dist/js/select2.min.js"></script>
   <script src="../bower_components/select2/dist/js/i18n/zh-CN.js"></script>
   <script src="../bower_components/vue-select/dist/vue-select.js"></script>
-
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 <body>
 <header class="container-fluid mb-3 bg-light">
@@ -180,20 +181,26 @@
     </div>
   </div><!-- 查看邀请码modal-->
 </header>
-<!--引入标签的导航栏-->
-<div class="container-fluid" >
-  <div class="nav font-weight-light">
-    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>全部</small></a>
-    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>Java基础</small></a>
-    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>Java OOP</small></a>
-    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>Java SE</small></a>
-    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>WebServer</small></a>
-    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>二进制</small></a>
-    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>Web</small></a>
-    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>MySQL</small></a>
-    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>Servlet</small></a>
-  </div>
-</div>
+           <!--引入标签的导航栏-->
+<!--<div class="container-fluid" >-->
+<!--  <div class="nav font-weight-light">-->
+<!--    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>全部</small></a>-->
+<!--    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>Java基础</small></a>-->
+<!--    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>Java OOP</small></a>-->
+<!--    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>Java SE</small></a>-->
+<!--    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>WebServer</small></a>-->
+<!--    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>二进制</small></a>-->
+<!--    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>Web</small></a>-->
+<!--    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>MySQL</small></a>-->
+<!--    <a href="../tag/tag_question.html" class="nav-item nav-link text-info"><small>Servlet</small></a>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--自定义模板-->    <!-- 模板   正     -->
+<tagsapp id="tagsApp" :tags="tags"></tagsapp>
+
+
+
 <div class="container-fluid mt-2 mb-1 bg-light" id="app" v-cloak>
   <div class="row">
     <div class="alsrtInfo" style="display: none" :style="{display: displayStsates}" ref="alertMsg">
@@ -202,10 +209,10 @@
   </div>
   <div class="row">
 
-    <div class="col-8">
+    <div class="col-8" id="createQuestionApp">
       <h4 class="border-bottom m-2 p-2 font-weight-light"><i class="fa fa-question-circle-o" aria-hidden="true"></i>
         填写问题</h4>
-      <form >
+      <form @submit.prevent="createQuestion()">
         <div class="form-group">
           <label for="title">标题:</label>
           <input type="text" class="form-control" id="title" name="title" placeholder="请填写标题3~50字符"
@@ -213,23 +220,11 @@
         </div>
         <div class="form-group">
           <label >请至少选择一个标签：</label>
-          <select multiple class="form-control" name="tags" >
-            <option>Java基础</option>
-            <option>Java OOP</option>
-            <option>Java SE</option>
-            <option>Spring</option>
-            <option>Spring MVC</option>
-          </select>
+          <v-select multiple required v-bind:options="tags" v-model="selectedTags" placeholder="请选择与问题相关的标签"></v-select>
         </div>
         <div class="form-group">
           <label >请选择老师：</label>
-          <select multiple class="form-control" name="teachers" >
-            <option>王克晶</option>
-            <option>范传奇</option>
-            <option>刘国斌</option>
-            <option>张皓岚</option>
-            <option>刘苍松</option>
-          </select>
+          <v-select multiple required v-bind:options="teachers" v-model="selectedTeachers" placeholder="请选择提问的讲师"></v-select>
         </div>
         <div class="form-group">
           <!--富文本编辑器 start-->
@@ -243,31 +238,7 @@
     </div>
     <div class="col-4 pb-2 ">
       <!--个人信息-->
-      <div class="container-fluid font-weight-light">
-        <div class="card">
-          <h5 class="card-header">陈某</h5>
-          <div class="card-body">
-            <div class="list-inline mb-1 ">
-                <a class="list-inline-item mx-3 my-1 text-center">
-                  <div><strong>10</strong></div>
-                  <div>回答</div>
-                </a>
-                <a class="list-inline-item mx-3 my-1 text-center" href="personal/myQuestion.html">
-                  <div><strong>10</strong></div>
-                  <div>提问</div>
-                </a>
-                <a class="list-inline-item mx-3 my-1 text-center" href="personal/collect.html">
-                  <div><strong>10</strong></div>
-                  <div>收藏</div>
-                </a>
-                <a class="list-inline-item mx-3 my-1 text-center" href="personal/task.html">
-                  <div><strong>10</strong></div>
-                  <div>任务</div>
-                </a>
-            </div>
-          </div>
-        </div>
-      </div>
+      <userapp id="userApp" :user="user"> </userapp>
       <!--热点数据-->
       <div class="container-fluid bg-light mt-5">
         <h4 class="m-2 p-2 font-weight-light"><i class="fa fa-list" aria-hidden="true"></i> 热点问题</h4>
@@ -500,16 +471,42 @@
 </footer>
 <script src="../plugins/summernote/summernote.min.js"></script>
 <script src="../plugins/summernote/summernote-zh-CN.min.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/tags_nav_temp.js"></script>
+<script src="../js/user_info_temp.js"></script>
+<script src="../js/user_info.js"></script>
+<script src="../js/tags_nav.js"></script>
+<script src="../js/createQuestion.js"></script>
 <script>
   $(document).ready(function() {
     $('#summernote').summernote({
       height: 300,
       tabsize: 2,
       lang: 'zh-CN',
-      placeholder: '请输入问题的详细描述...'
+      placeholder: '请输入问题的详细描述...',
+      callbacks:{
+        onImageUpload:function (files) {
+          //参数是用户选中的图片，默认是数组，我们获得其中第一个元素
+          let file = files[0];
+          let form = new FormData();
+          form.append("imageFile",file);
+          axios({
+            url:"/upload/file",
+            method:"post",
+            data:form
+          }).then(function (r) {   //java 返回的url= resourceHost + "/" + path + "/" + name;
+            //创建一个img标签对象
+            let img = new Image();
+            img.src=r.data;
+            $("#summernote").summernote("insertNode",img);
+            console.log(r)
+          })
+        }
+      }
     });
     $('select').select2({placeholder:'请选择...'});
   });
 </script>
+
 </body>
 </html>

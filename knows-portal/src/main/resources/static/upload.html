@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文件上载演示</title>
+</head>
+<script src="bower_components/jquery/dist/jquery.min.js" ></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<body>
+<form id="demoForm" method="post"
+      enctype="multipart/form-data"
+      action="/upload/file" >
+    <div>
+        <label>上传文件
+            <input id="imageFile" type="file" name="imageFile">
+        </label>
+    </div>
+    <button type="submit">上传文件</button>
+</form>
+<img id="image" src="http://localhost:8899/2021/07/02/abc.jpg"  alt="">
+</body>
+<script>
+  $("#demoForm").submit(function () {
+      //获得用户选择的文件 返回的是一个数组
+        let files = document.getElementById("imageFile").files;
+        //判断的数组的长度是不是》0
+      if (files.length > 0){
+          let file = files[0];
+          //调用上传文件的方法 uploadImage(file)
+          uploadImage(file)
+      }else {
+          alert("请选择文件")
+      }
+
+      //阻止表单提交页面不跳转
+      return false;
+  })
+  function uploadImage(file){
+      let form = new FormData();
+      //imageFile和控制器的uploFile方法参数名称对应 一致
+      form.append("imageFile",file);
+      axios({
+          url:"/upload/file",
+          method:"post",
+          data:form
+      }).then(function (r) {
+          console.log(r.data);
+          //将返回的图片路径赋值为img标签的src属性用于显示
+          $("#image").attr("src",r.data)
+      })
+  }
+
+</script>
+</html>

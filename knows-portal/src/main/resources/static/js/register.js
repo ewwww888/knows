@@ -24,6 +24,7 @@ let app = new Vue({
                 this.hasError = true;
                 return;
             }
+
             axios({
                 method:'post',
                 url:'/register',

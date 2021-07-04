@@ -17,4 +17,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserCollectServiceImpl extends ServiceImpl<UserCollectMapper, UserCollect> implements IUserCollectService {
 
+    @Override
+    public Integer countCollectsByUserId(Integer userId) {
+
+        return null;
+    }
 }

@@ -25,11 +25,14 @@ let createQuestionApp = new Vue({
                 data:form,
             }).then(function(r){
                 console.log(r.data);
-                if(r.status==OK){
-                    location.href="/index.html";
+                if(r.data =="问题已发布"){
+                    location.href="/index_student.html";
+                }else {
+                    alert("失败！")
                 }
             })
         },
+
         loadTags:function () {
             console.log("loadTags");
             axios({

@@ -2,13 +2,16 @@ package cn.tedu.knows.portal.service.impl;
 
 import cn.tedu.knows.portal.mapper.UserMapper;
 import cn.tedu.knows.portal.model.Permission;
+import cn.tedu.knows.portal.model.Role;
 import cn.tedu.knows.portal.model.User;
+import com.baomidou.mybatisplus.extension.api.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -23,6 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 
     /**
+     * 通过用户名获得.....
      * 1.首先根据用户名获得用户信息
      * 2.检查用户是否存在
      * 3.根据用户id查询用户权限
@@ -48,15 +52,24 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             auth[i++]=p.getName();
         }
 
+        List<Role> roles = userMapper.findUserRolesById(user.getId());
+        auth = Arrays.copyOf(auth,auth.length+roles.size());
+
+        for (Role role:roles){
+            auth[i++]= role.getName();
+        }
+
+
         //5.
         UserDetails u = org.springframework.security.core.userdetails.User
                 .builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
-                .authorities(auth)
+                .authorities(auth)    //授权
                 .accountLocked(user.getLocked()==1)    //getLocked值为0,==1结果为false
                 .disabled(user.getEnabled()==0)
                 .build();
         return u;
     }
+
 }

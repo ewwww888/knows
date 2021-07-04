@@ -1,8 +1,11 @@
 package cn.tedu.knows.portal;
 
+import cn.tedu.knows.portal.mapper.QuestionMapper;
 import cn.tedu.knows.portal.mapper.UserMapper;
 import cn.tedu.knows.portal.model.Permission;
+import cn.tedu.knows.portal.model.Role;
 import cn.tedu.knows.portal.model.User;
+import cn.tedu.knows.portal.service.IQuestionService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -60,5 +63,22 @@ public class SecurityTest {
             System.out.println(p);
         }
     }
+
+    @Autowired
+    IQuestionService questionService;
+    @Test
+    void count(){
+         Integer q = questionService.countQuestionsByUserId(11);
+        System.out.println(q);
+
+    }
+   @Test
+    void role(){
+        List<Role> roles = userMapper.findUserRolesById(1);
+        for (Role r: roles){
+            System.out.println(r);
+        }
+   }
+
 
 }
